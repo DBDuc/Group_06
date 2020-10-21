@@ -4,6 +4,7 @@ from flask_cors import CORS
 import numpy, random
 from datetime import datetime, timedelta
 import json
+from DataAccessObject import *
 from RandomDealData import *
 
 app = Flask(__name__)
@@ -20,10 +21,15 @@ def testservice():
 def stream():
     rdd = RandomDealData()
     instrList = rdd.createInstrumentList()
+    dao = DataAccessObject()
     def eventStream():
         while True:
             #nonlocal instrList
-            yield rdd.createRandomData(instrList) + "\n"
+            # yield  rdd.createRandomData(instrList) + "\n"
+            dealData = rdd.createRandomData(instrList) + "\n"
+            dao.addData(dealData)
+
+            yield dealData
     return Response(eventStream(), status=200, mimetype="text/event-stream")
 
 def sse_stream():
