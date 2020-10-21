@@ -1,6 +1,7 @@
 from flask import Flask, render_template, Response
 from flask_sse import sse
 from flask_cors import CORS
+from flask import request
 import requests
 import time
 
@@ -28,6 +29,19 @@ def index():
     return "webtier service points are running..."
 
 
+""" access web tier end points to check log in credentials"""
+@app.route('/login')
+def login_credentials():
+    r = requests.get('http://localhost:8080/login')
+    return True
+
+""" access web tier end points to display historic data"""
+@app.route('/historicdeals')
+def historic_deals():
+    r = requests.get('http://localhost:8080/historicdeals', stream=False)
+    return True
+
+
 def get_message():
     """this could be any function that blocks until data is ready"""
     time.sleep(1.0)
@@ -39,3 +53,5 @@ def bootapp():
 
 if __name__ == '__main__':
      bootapp()
+
+
