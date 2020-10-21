@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask import request
 import requests
 import time
+import json
 
 app = Flask(__name__)
 #app.register_blueprint(sse, url_prefix='/stream')
@@ -45,22 +46,8 @@ def historic_deals():
 """ example deal file """
 @app.route('/json-example', methods=['POST']) #GET requests will be blocked
 def json_example():
-    req_data = request.get_json()
-    instrumentName = req_data['instrumentName']
-    cpty = req_data['cpty']
-    price = req_data['price']
-    type = req_data['type']
-    quantity = req_data['quantity']
-    time = req_data['time']
-
-    return '''
-        The instrumentName value is: {}
-        The cpty value is: {}
-        The price is: {}
-        The type value is: {}
-        The quantity value is: {}
-        The price is: {}
-        The time is: {}'''.format(instrumentName, cpty, price, type, quantity, time)
+    with open('deals_data.json') as json_file:
+        data = json.load(json_file)
 
 
 def get_message():
