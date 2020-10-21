@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask import request
 import requests
 import time
+import json
 
 app = Flask(__name__)
 #app.register_blueprint(sse, url_prefix='/stream')
@@ -41,6 +42,14 @@ def historic_deals():
     r = requests.get('http://localhost:8080/historicdeals', stream=False)
     return True
 
+""" example deal file """
+@app.route('/json_example') #GET requests will be blocked
+def json_example():
+    data = []
+    with open('../../deals_data.json') as json_file:
+        data = json.load(json_file)
+
+    return data
 
 def get_message():
     """this could be any function that blocks until data is ready"""
