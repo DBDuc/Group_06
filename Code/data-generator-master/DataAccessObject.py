@@ -73,18 +73,21 @@ class DataAccessObject:
     
 
     def loginCheck(connection, user, password):
-        account = sql.GetQuery('SELECT * FROM users WHERE user_id = {} AND user_pwd = {}'.format(user, password))
+        account = sql.GetQuery('SELECT * FROM users WHERE user_id = "{}" AND user_pwd = "{}"'.format(user, password))
         if account:
             return {"message": "Login successful!",
                     "value": True}
+        else:
+            return {"message": "Incorrect user/password, try again.",
+                    "value": False}
+
 
     def printDatabases(self):
         
         databases = sql.GetQuery("SHOW DATABASES")
-
-        else:
-            return {"message": "Incorrect user/password, try again.",
-                    "value": False}
+        for db in databases:
+            print(db)
+        
         
     
 
@@ -97,4 +100,4 @@ class DataAccessObject:
 # Just to test that connection works
 if __name__ == "__main__":
     dao = DataAccessObject()
-    dao.printTables()
+    print(dao.loginCheck("melissa","dbgrad@mel"))
