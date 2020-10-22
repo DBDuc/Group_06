@@ -10,7 +10,7 @@ class DataAccessObject:
 
     def addDealData(self, data):
         """Add Stream Data to SQL DB"""
-        return 0
+        
         data = ast.literal_eval(data)
         Counterparty_id = self.GetSetID ("counterparty",data["cpty"])
         Instrument_id = self.GetSetID ("instrument", data["instrumentName"])
@@ -37,6 +37,7 @@ class DataAccessObject:
         return ID
 
     def RequestID(self,table,string):
+        """ Getter for id object (in case format are tablename_id and table_name)"""
         id = sql.GetQuery("SELECT "+table+"_id"+
         " FROM "+table+
         " WHERE "+table+"_name = '"+string+"'"
@@ -49,6 +50,8 @@ class DataAccessObject:
 
 
     def SetNewRow(self,table,content):
+        """Set new content to "table".
+        "content" needs to be in dict format e.g. {column_name:insert_value}"""
         
         column_key = ""
         column_value = ""
