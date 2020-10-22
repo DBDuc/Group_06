@@ -1,6 +1,7 @@
 {
 "deals":[
 	{"data":{"instrumentName": "Galactia", "cpty": "Lewis", "price": 9964.235074757127, "type": "S", "quantity": 71, "time": "11-Aug-2019 (12:07:06.471252)"}},
+	
 	{"data":{"instrumentName": "Deuteronic", "cpty": "Lewis", "price": 8540.619061084186, "type": "B", "quantity": 2, "time": "11-Aug-2019 (12:07:06.669213)"}},
 
 	{"data":{"instrumentName": "Lunatic", "cpty": "John", "price": 1830.8271150278415, "type": "B", "quantity": 1, "time": "11-Aug-2019 (12:07:06.944790)"}},
