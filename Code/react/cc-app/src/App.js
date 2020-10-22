@@ -1,14 +1,14 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import DealsComponent from './DealsComponent'
+import React , { Component } from "react";
+import "./App.css";
+import LandingView from "./LandingView";
 
-
-function App() {
-  return (
-    <DealsComponent></DealsComponent>
-
-  );
+class App extends Component {
+    render() {
+        return (
+            <div className="App">
+                <LandingView />
+            </div>
+        )
+    }
 }
-
 export default App;

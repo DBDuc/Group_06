@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 
 function DealsComponent() {
   const [deals, setDeals] = useState([]);
@@ -26,6 +26,7 @@ function DealsComponent() {
         {deals}
     </div>
   );
+
 }
 
 export default DealsComponent;
