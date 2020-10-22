@@ -48,10 +48,12 @@ class DataAccessObject:
         return connection
 
     def loginCheck(connection, user, password):
-        connection = self.connectToDatabase("localhost", "root", "ppp", database=db_grad_cs_1917)
-        cur = connection.cursor()
-        cur.execute('SELECT * FROM users WHERE user_id = %s AND user_pwd = %s', (user, password))
-        account = cur.fetchone()
+        #connection = self.connectToDatabase("localhost", "root", "ppp", database=db_grad_cs_1917)
+        #cur = connection.cursor()
+        #cur.execute('SELECT * FROM users WHERE user_id = %s AND user_pwd = %s', (user, password))
+        #account = cur.fetchone()
+        account = True
+
         if account:
             return {"message": "Login successful!",
                     "value": True}

@@ -50,10 +50,15 @@ def index():
 def login():
     if request.method == 'POST':
         session['username'] = request.form['username']
+        API_ENDPOINT = "http://localhost:8080/checkUsername"
+        r = requests.post(url=API_ENDPOINT, data={"username": "Selvyn", "password": "password"})
+        data = r.json()
+        return data
+        #return r.json()
         #### -> beackend API -> Databases
-        return redirect(url_for('index'))
+        #return redirect(url_for('index'))
     return '''
-        <form action="localhost:8090/login" method="post">
+        <form method="post">
             <p><input type=text name=username>
             <p><input type=password name=password>
             <p><input type=submit value=Login>

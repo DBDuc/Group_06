@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, request
 from flask_cors import CORS
 import webServiceStream
 from DataAccessObject import *
@@ -10,12 +10,14 @@ CORS(app)
 method=["post"]
 
 
-@app.route('/checkUsername', method=["post"])
-def index():
+@app.route('/checkUsername', methods=["post"])
+def checkUsername():
     username = request.form["username"]
-    password = request.form["username"]
+    password = request.form["password"]
+    print(username)
+    print(password)
     dao = DataAccessObject()
-    return dao.loginCheck(user, password)
+    return dao.loginCheck(username, password)
 
 
 @app.route('/')
