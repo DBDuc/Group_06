@@ -1,20 +1,35 @@
-
-
 class SQL(object):
     def Query(self,Query):
         print(Query)
-        return 1
+        return None
+
+
 
 def RequestID(table,column,string):
     sql = SQL()
-    return sql.Query("SELECT "+table+"_id "+
+    return sql.Query("SELECT "+column+
     " FROM "+table+
-    " WHERE "+table+"_name = "+string
+    " WHERE "+table+"_name = '"+string+"'"
     )
 
 def SetNewRow(table,content):
+    column_key = ""
+    column_value = ""
+    for key,val in content.items():
+        column_key += key+","
+        if isinstance(val,str): #test for str
+            column_value += "'"+str(val)+"',"
+        else:
+            column_value += str(val)+","
+
+    column_key = "("+column_key[:-1]+")"
+    column_value = "("+column_value[:-1]+")"
+
     sql = SQL()
-    sql.Query("SELECT "+table+"_id "+
-    " FROM "+table+
-    " WHERE "+table+"_name = "+string
+
+    sql.Query("LOCK TABLES "+table+" WRITE;"+
+    "/*!40000 ALTER TABLE "+table+" DISABLE KEYS */;"+
+    "INSERT INTO "+table+" "+column_key+" VALUES "+column_value+
+    "/*!40000 ALTER TABLE "+table+" ENABLE KEYS */;"+
+    "UNLOCK TABLES;"
     )
