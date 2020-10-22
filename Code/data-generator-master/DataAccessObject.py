@@ -73,11 +73,7 @@ class DataAccessObject:
 
 
     def loginCheck(connection, user, password):
-        account = sql.GetQuery('SELECT * FROM users WHERE user_id = {} AND user_pwd = {}'.format(user, password))
-        connection = self.connectToDatabase("localhost", "root", "ppp", database=db_grad_cs_1917)
-        cur = connection.cursor()
-        cur.execute('SELECT * FROM users WHERE user_id = %s AND user_pwd = %s', (user, password))
-        account = cur.fetchone()
+        account = sql.GetQuery('SELECT * FROM users WHERE user_id = "{}" AND user_pwd = "{}"'.format(user, password))
         #account = True
 
         if account:
@@ -106,4 +102,4 @@ class DataAccessObject:
 # Just to test that connection works
 if __name__ == "__main__":
     dao = DataAccessObject()
-    print(dao.loginCheck("melissa","dbgrad@mel"))
+    print(dao.loginCheck("alison","gradprog2016@07"))
