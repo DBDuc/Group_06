@@ -51,7 +51,8 @@ def login():
     if request.method == 'POST':
         session['username'] = request.form['username']
         API_ENDPOINT = "http://localhost:8080/checkUsername"
-        r = requests.post(url=API_ENDPOINT, data={"username": "Selvyn", "password": "password"})
+        #User: alison pw:gradprog2016@07
+        r = requests.post(url=API_ENDPOINT, data={"username": "alison", "password": "gradprog2016@07"})
         data = r.json()
         return data
         #return r.json()
