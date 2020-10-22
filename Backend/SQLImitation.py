@@ -1,4 +1,15 @@
+import mysql.connector
+
 class SQL(object):
+
+    def __init__(self):
+        mysql.connector.connect(host='127.0.0.1',
+                                port = "3306",
+                                database="mysql-server",
+                                user="root",
+                                password = "ppp")
+
+
     def Query(self,Query):
         print(Query)
         return None
