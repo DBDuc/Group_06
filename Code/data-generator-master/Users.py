@@ -1,11 +1,4 @@
-import mysql.connector
-
-mydb = mysql.connector.connect(host = "localhost",
-                               user="root",
-                               password="ppp",
-                               database= "db_grad_cs_1917"
-                              )
-cur = mydb.cursor()
+from MySQLConnect import *
 
 
 def getLogin():
@@ -17,9 +10,7 @@ def getLogin():
 
 
 def loginCheck(user, password):
-
-    cur.execute('SELECT * FROM users WHERE user_id = %s AND user_pwd = %s', (user, password))
-    account = cur.fetchone()
+    account = sql.GetQuery('SELECT * FROM users WHERE user_id = "{}" AND user_pwd = "{}"'.format(user,password))
     if account:
         return print ("Login successful!")
 
@@ -29,9 +20,7 @@ def loginCheck(user, password):
 
 def newLogin():
 
-    query = "INSERT INTO users (user_id, user_pwd) VALUES (%s, %s)"
-    login_details = ("melissa", "dbgrad@mel")
-    cur.execute(query, login_details)
-
-    mydb.commit()
+    sql.SetQuery ("INSERT INTO users (user_id, user_pwd) VALUES ('{}', '{}')".format("melissa", "dbgrad@mel"))
     return print("Sucessfully created new account!")
+
+newLogin()
