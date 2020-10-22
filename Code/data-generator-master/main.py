@@ -19,6 +19,11 @@ def checkUsername():
     dao = DataAccessObject()
     return dao.loginCheck(username, password)
 
+@app.route('/historicData')
+def historicData():
+    dao = DataAccessObject()
+    return dao.GetHistoricData()
+
 
 @app.route('/')
 def index():
