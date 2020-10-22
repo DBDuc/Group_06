@@ -38,10 +38,10 @@ class DataAccessObject:
             ID = SQL.RequestID(table,table+"_name",name)
         return ID
     
-    def connectToDatabase(self):
+    def connectToDatabase(self, host, user, password, database = None):
         connection = None
         try:
-            connection = mysql.connector.connect(host="localhost", user="root", password="ppp")
+            connection = mysql.connector.connect(host=host, user=user, password=password, database = database)
             print("Connection to my DB Successful")
         except Error as e:
             print(f"The error '{e}' occurred")
@@ -55,8 +55,19 @@ class DataAccessObject:
         for database in databases:
             print(database)
 
+    def printTables(self, connection):
+        cur = connection.cursor()
+        cur.execute("SHOW TABLES")
+        tables = cur.fetchall()
+
+        for table in tables:
+            print(table)
+
 # Just to test that connection works
 if __name__ == "__main__":
-      dao = DataAccessObject()
-      connection = dao.connectToDatabase()
-      dao.printDatabases(connection)
+    dao = DataAccessObject()
+    # database = "db_grad_cs_1917"
+    database = "db_grad_cs_1917_filled"
+    
+    connection = dao.connectToDatabase("localhost", "root", "ppp", database)
+    dao.printTables(connection)
