@@ -1,8 +1,6 @@
 import numpy, random
 import json, ast
-import SQLImitation as SQL
-import mysql.connector
-from mysql.connector import Error
+from MySQLConnect import *
 from RandomDealData import *
 from datetime import datetime, timedelta
 from flask import Flask, Response
@@ -12,12 +10,12 @@ class DataAccessObject:
 
     def addDealData(self, data):
         """Add Stream Data to SQL DB"""
-
+        return 0
         data = ast.literal_eval(data)
         Counterparty_id = self.GetSetID ("counterparty",data["cpty"])
         Instrument_id = self.GetSetID ("instrument", data["instrumentName"])
 
-        SQL.SetNewRow("deal",
+        self.SetNewRow("deal",
                     {"deal_time":data["time"],
                     "deal_counterparty_id":Counterparty_id,
                     "deal_instrument_id":Instrument_id,
@@ -30,35 +28,55 @@ class DataAccessObject:
         """Getter for id object (in case format are tablename_id and table_name)
         Create new entry if no table_name exists"""
 
-        ID = SQL.RequestID(table,table+"_name",name)   
+        ID = self.RequestID(table,name)   
         if ID == None: # To check what SQL.RequestID return in case of no match
-            SQL.SetNewRow(table,
+            self.SetNewRow(table,
                             {table+"_name":name
                             })
-            ID = SQL.RequestID(table,table+"_name",name)
+            ID = self.RequestID(table,name)
         return ID
+
+    def RequestID(self,table,string):
+        id = sql.GetQuery("SELECT "+table+"_id"+
+        " FROM "+table+
+        " WHERE "+table+"_name = '"+string+"'"
+        )
+
+        if id == []:
+            return None
+        else:
+            return id[0][0]
+
+
+    def SetNewRow(self,table,content):
+        
+        column_key = ""
+        column_value = ""
+        for key,val in content.items():
+            column_key += key+","
+            if isinstance(val,str): #test for str
+                column_value += "'"+str(val)+"',"
+            else:
+                column_value += str(val)+","
+
+        column_key = "("+column_key[:-1]+")"
+        column_value = "("+column_value[:-1]+")"
+
+        sql.SetQuery("LOCK TABLES "+table+" WRITE;")
+        sql.SetQuery("/*!40000 ALTER TABLE "+table+" DISABLE KEYS */;")
+        sql.SetQuery("INSERT INTO "+table+" "+column_key+" VALUES "+column_value+";")
+        sql.SetQuery("/*!40000 ALTER TABLE "+table+" ENABLE KEYS */;")
+        sql.SetQuery("UNLOCK TABLES;")
     
-    def connectToDatabase(self, host, user, password, database = None):
-        connection = None
-        try:
-            connection = mysql.connector.connect(host=host, user=user, password=password, database = database)
-            print("Connection to my DB Successful")
-        except Error as e:
-            print(f"The error '{e}' occurred")
-        return connection
-    
-    def printDatabases(self, connection):
-        cur = connection.cursor()
-        cur.execute("SHOW DATABASES")
-        databases = cur.fetchall()
+    def printDatabases(self):
+        
+        databases = sql.GetQuery("SHOW DATABASES")
 
         for database in databases:
             print(database)
 
-    def printTables(self, connection):
-        cur = connection.cursor()
-        cur.execute("SHOW TABLES")
-        tables = cur.fetchall()
+    def printTables(self):
+        tables = sql.GetQuery("SHOW TABLES")
 
         for table in tables:
             print(table)
@@ -66,8 +84,4 @@ class DataAccessObject:
 # Just to test that connection works
 if __name__ == "__main__":
     dao = DataAccessObject()
-    # database = "db_grad_cs_1917"
-    database = "db_grad_cs_1917_filled"
-    
-    connection = dao.connectToDatabase("localhost", "root", "ppp", database)
-    dao.printTables(connection)
+    dao.printTables()
