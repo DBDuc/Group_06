@@ -26,10 +26,10 @@ def stream():
         while True:
             #nonlocal instrList
             # yield  rdd.createRandomData(instrList) + "\n"
-            dealData = rdd.createRandomData(instrList) + "\n"
-            dao.addData(dealData)
+            dealData = rdd.createRandomData(instrList)
+            dao.addDealData(dealData)
 
-            yield dealData
+            yield dealData + "\n"
     return Response(eventStream(), status=200, mimetype="text/event-stream")
 
 def sse_stream():
