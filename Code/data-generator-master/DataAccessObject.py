@@ -46,14 +46,21 @@ class DataAccessObject:
         except Error as e:
             print(f"The error '{e}' occurred")
         return connection
-    
-    def printDatabases(self, connection):
-        cur = connection.cursor()
-        cur.execute("SHOW DATABASES")
-        databases = cur.fetchall()
 
-        for database in databases:
-            print(database)
+    def loginCheck(connection, user, password):
+        connection = self.connectToDatabase("localhost", "root", "ppp", database=db_grad_cs_1917)
+        cur = connection.cursor()
+        cur.execute('SELECT * FROM users WHERE user_id = %s AND user_pwd = %s', (user, password))
+        account = cur.fetchone()
+        if account:
+            return {"message": "Login successful!",
+                    "value": True}
+
+        else:
+            return {"message": "Incorrect user/password, try again.",
+                    "value": False}
+        
+    
 
     def printTables(self, connection):
         cur = connection.cursor()

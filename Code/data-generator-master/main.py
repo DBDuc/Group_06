@@ -7,6 +7,16 @@ from RandomDealData import *
 app = Flask(__name__)
 CORS(app)
 
+method=["post"]
+
+
+@app.route('/checkUsername', method=["post"])
+def index():
+    username = request.form["username"]
+    password = request.form["username"]
+    dao = DataAccessObject()
+    return dao.loginCheck(user, password)
+
 
 @app.route('/')
 def index():
@@ -24,22 +34,6 @@ def stream():
 def sse_stream():
      return webServiceStream.sse_stream()
 
-# TEST Getting the Generator
-
-# @app.route('/testGenerator')
-# def Gen():
-#     gen =series()
-#     val =str(next(gen))
-#     print(val)
-#     res = Response(val)
-#     return res
-
-
-# def series():
-#     for i in range(1,999):
-#         yield i
-
-# ----------------------------------
 
 
 def bootapp():
