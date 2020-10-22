@@ -1,8 +1,6 @@
 import numpy, random
 import json, ast
-import SQLImitation as SQL
-import mysql.connector
-from mysql.connector import Error
+from MySQLConnect import *
 from RandomDealData import *
 from datetime import datetime, timedelta
 from flask import Flask, Response
@@ -17,7 +15,7 @@ class DataAccessObject:
         Counterparty_id = self.GetSetID ("counterparty",data["cpty"])
         Instrument_id = self.GetSetID ("instrument", data["instrumentName"])
 
-        SQL.SetNewRow("deal",
+        self.SetNewRow("deal",
                     {"deal_time":data["time"],
                     "deal_counterparty_id":Counterparty_id,
                     "deal_instrument_id":Instrument_id,
@@ -30,24 +28,52 @@ class DataAccessObject:
         """Getter for id object (in case format are tablename_id and table_name)
         Create new entry if no table_name exists"""
 
-        ID = SQL.RequestID(table,table+"_name",name)   
+        ID = self.RequestID(table,name)
         if ID == None: # To check what SQL.RequestID return in case of no match
-            SQL.SetNewRow(table,
+            self.SetNewRow(table,
                             {table+"_name":name
                             })
-            ID = SQL.RequestID(table,table+"_name",name)
+            ID = self.RequestID(table,name)
         return ID
-    
-    def connectToDatabase(self, host, user, password, database = None):
-        connection = None
-        try:
-            connection = mysql.connector.connect(host=host, user=user, password=password, database = database)
-            print("Connection to my DB Successful")
-        except Error as e:
-            print(f"The error '{e}' occurred")
-        return connection
+
+    def RequestID(self,table,string):
+        """ Getter for id object (in case format are tablename_id and table_name)"""
+        id = sql.GetQuery("SELECT "+table+"_id"+
+        " FROM "+table+
+        " WHERE "+table+"_name = '"+string+"'"
+        )
+
+        if id == []:
+            return None
+        else:
+            return id[0][0]
+
+
+    def SetNewRow(self,table,content):
+        """Set new content to "table".
+        "content" needs to be in dict format e.g. {column_name:insert_value}"""
+
+        column_key = ""
+        column_value = ""
+        for key,val in content.items():
+            column_key += key+","
+            if isinstance(val,str): #test for str
+                column_value += "'"+str(val)+"',"
+            else:
+                column_value += str(val)+","
+
+        column_key = "("+column_key[:-1]+")"
+        column_value = "("+column_value[:-1]+")"
+
+        sql.SetQuery("LOCK TABLES "+table+" WRITE;")
+        sql.SetQuery("/*!40000 ALTER TABLE "+table+" DISABLE KEYS */;")
+        sql.SetQuery("INSERT INTO "+table+" "+column_key+" VALUES "+column_value+";")
+        sql.SetQuery("/*!40000 ALTER TABLE "+table+" ENABLE KEYS */;")
+        sql.SetQuery("UNLOCK TABLES;")
+
 
     def loginCheck(connection, user, password):
+        account = sql.GetQuery('SELECT * FROM users WHERE user_id = {} AND user_pwd = {}'.format(user, password))
         #connection = self.connectToDatabase("localhost", "root", "ppp", database=db_grad_cs_1917)
         #cur = connection.cursor()
         #cur.execute('SELECT * FROM users WHERE user_id = %s AND user_pwd = %s', (user, password))
@@ -58,16 +84,18 @@ class DataAccessObject:
             return {"message": "Login successful!",
                     "value": True}
 
+    def printDatabases(self):
+
+        databases = sql.GetQuery("SHOW DATABASES")
+
         else:
             return {"message": "Incorrect user/password, try again.",
                     "value": False}
         
     
 
-    def printTables(self, connection):
-        cur = connection.cursor()
-        cur.execute("SHOW TABLES")
-        tables = cur.fetchall()
+    def printTables(self):
+        tables = sql.GetQuery("SHOW TABLES")
 
         for table in tables:
             print(table)
@@ -75,8 +103,4 @@ class DataAccessObject:
 # Just to test that connection works
 if __name__ == "__main__":
     dao = DataAccessObject()
-    # database = "db_grad_cs_1917"
-    database = "db_grad_cs_1917_filled"
-    
-    connection = dao.connectToDatabase("localhost", "root", "ppp", database)
-    dao.printTables(connection)
+    dao.printTables()
