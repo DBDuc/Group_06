@@ -27,7 +27,7 @@ def stream():
             #nonlocal instrList
             # yield  rdd.createRandomData(instrList) + "\n"
             dealData = rdd.createRandomData(instrList)
-            dao.addData(dealData)
+            dao.addDealData(dealData)
 
             yield dealData + "\n"
     return Response(eventStream(), status=200, mimetype="text/event-stream")

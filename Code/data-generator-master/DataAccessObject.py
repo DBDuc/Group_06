@@ -1,14 +1,16 @@
+import numpy, random
+import json, ast
+import SQLImitation as SQL
+import mysql.connector
+from mysql.connector import Error
+from RandomDealData import *
+from datetime import datetime, timedelta
 from flask import Flask, Response
 from flask_cors import CORS
-import numpy, random
-from datetime import datetime, timedelta
-import json, ast
-from RandomDealData import *
-import SQLImitation as SQL
 
 class DataAccessObject:
 
-    def addData(self, data):
+    def addDealData(self, data):
         """Add Stream Data to SQL DB"""
 
         data = ast.literal_eval(data)
@@ -35,3 +37,26 @@ class DataAccessObject:
                             })
             ID = SQL.RequestID(table,table+"_name",name)
         return ID
+    
+    def connectToDatabase(self):
+        connection = None
+        try:
+            connection = mysql.connector.connect(host="localhost", user="root", password="ppp")
+            print("Connection to my DB Successful")
+        except Error as e:
+            print(f"The error '{e}' occurred")
+        return connection
+    
+    def printDatabases(self, connection):
+        cur = connection.cursor()
+        cur.execute("SHOW DATABASES")
+        databases = cur.fetchall()
+
+        for database in databases:
+            print(database)
+
+# Just to test that connection works
+if __name__ == "__main__":
+      dao = DataAccessObject()
+      connection = dao.connectToDatabase()
+      dao.printDatabases(connection)
