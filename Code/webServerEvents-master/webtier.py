@@ -32,9 +32,13 @@ def client_to_server():
 """ example deal file """
 @app.route('/json_example') #GET requests will be blocked
 def json_example():
-    data = []
-    with open('../../deals_data.json') as json_file:
-        data = json.load(json_file)
+    #data = []
+    #with open('../../deals_data.json') as json_file:
+    #    data = json.load(json_file)
+
+    API_ENDPOINT = "http://localhost:8080/historicData"
+    r = requests.get(url=API_ENDPOINT)
+    data = r.json()
 
     return data
 
