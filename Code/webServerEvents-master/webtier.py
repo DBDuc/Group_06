@@ -79,12 +79,24 @@ def login():
             <p><input type=submit value=Login>
         </form>
     '''
+# LOGIN TESTS
+def test_login_positive(client):
+    API_ENDPOINT = "http://localhost:8080/checkUsername"
+    r = requests.post(url=API_ENDPOINT, data={"username": "alison", "password": "gradprog2016@07"})    
+    assert b'Login successful!' in rv["message"]
+
+def test_login_negative(client):
+    API_ENDPOINT = "http://localhost:8080/checkUsername"
+    r = requests.post(url=API_ENDPOINT, data={"username": "username", "password": "password"})    
+    assert b'Incorrect user/password, try again.' in rv["message"]
 
 @app.route('/logout')
 def logout():
     # remove the username from the session if it's there
     session.pop('username', None)
     return redirect(url_for('index'))
+
+
 
 def get_message():
     """this could be any function that blocks until data is ready"""
