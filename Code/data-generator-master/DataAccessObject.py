@@ -82,11 +82,15 @@ class DataAccessObject:
             return {"message": "Incorrect user/password, try again.",
                     "value": False}
 
-    def GetHistoricData (self):
+    def GetHistoricData (self, login_name = None):
+        login_restrict = ""
+        if login_name:
+            login_restrict = " WHERE counterparty_name = '"+login_name+"'"
+
         Data = sql.GetQuery("SELECT instrument_name, counterparty_name, deal_amount, deal_type, deal_quantity, deal_time "+
                 "FROM deal"+
                 "  INNER JOIN instrument ON deal_instrument_id = instrument_id"+
-                "    INNER JOIN counterparty ON deal_counterparty_id = counterparty_id")
+                "    INNER JOIN counterparty ON deal_counterparty_id = counterparty_id"+login_restrict)
         ListDeals = []
         for deal in Data:
             ListDeals.append({"data":{"instrumentName": deal[0], "cpty": deal[1], "price": float(deal[2]), "type": deal[3], "quantity": deal[4], "time": deal[5]}})
@@ -111,4 +115,4 @@ class DataAccessObject:
 # Just to test that connection works
 if __name__ == "__main__":
     dao = DataAccessObject()
-    print(dao.GetHistoricData())
+    print(dao.GetHistoricData("Nidia"))
